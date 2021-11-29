@@ -1,0 +1,227 @@
+<!doctype html>
+
+<html lang="en">
+
+  <head>
+
+    <meta charset="utf-8">
+
+    <title>Mortgage Loan Calculator</title>
+	<script src="accounting.js"></script>
+    <meta name="viewport"
+
+          content="width=device-width, initial-scale=1">
+
+<style>
+
+h1 {
+font-size: 45px;
+}
+
+.fontsize {
+font-size: 20px;
+}
+
+body {
+background: linear-gradient(to right, yellow 0%, green 100%);
+color: black;
+}
+
+.borderclass {
+border: solid white 5px;
+}
+
+img {
+width: 250px;
+height: auto;
+border: solid black 2px;
+}
+
+a.link,
+a.visited {
+font-weight: bold;
+text-decoration: none;
+color: black;
+}
+
+.tabledisplay {
+width: 100%;
+border: solid black 1px;
+border-collapse: collapse;
+padding: 3px;
+}
+
+.trdisplay {
+border: solid black 1px;
+border-collapse: collapse;
+}
+
+.tddisplay {
+border: solid black 1px;
+border-collapse: collapse;
+padding: 0px 20px 0px 0px;
+}
+
+.alignright {
+float: right;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<table class="borderclass"><tr><td>
+
+<h1>Mortgage Loan Calculator</h1>
+
+<form name="theform">
+<table>
+
+<tr>
+<td><strong><span style="float: left">Loan Amount:</span></strong></td>
+<td><input name="loanAmountFmInput" size="10"></td>
+<td rowspan="7"><img src="money.jpg" alt="picture of money"></td>
+</tr>
+
+<tr>
+<td><strong><span style="float: left">Rate:</span></strong></td>
+<td><input name="rateFmInput" size="10"></td>
+</tr>
+
+<tr>
+<td><strong><span style="float: left">Years:</span></strong></td>
+<td><input name="yearsFmInput" size="10"></td>
+</tr>
+
+<tr>
+<td><strong><span style="float: left">Num of Payments:</span></strong></td>
+<td style="background-color: white; color: black" id="numofPaymentsFmOutput"></td>
+</tr>
+
+<tr>
+<td><strong><span style="float: left">Monthly Payment:</span></strong></td>
+<td style="background-color: white; color: black" id="paymentFmOutput"></td>
+</tr>
+
+<tr>
+<td><strong><span style="float: left">Total Interest:</span></strong></td>
+<td style="background-color: white; color: black" id="totalInterestFmOutput"></td>
+</tr>
+
+<tr>
+<td colspan="2">
+	<input type="button" name="calc" value="Calculate" onclick="calculate();">
+	<input type="button" name="clear" value="Clear" onclick="clearinfo();">
+</td>
+</tr>
+
+</table>
+
+<p></p>
+
+<span class="fontsize">Loan Amount:</span>
+<span class="fontsize" id="loanAmountFmOutput"></span>
+<span style="background-color: white; color: black" id="reportFmOutput"></span>
+
+</form>
+
+<script>
+document.theform.loanAmountFmInput.focus();
+
+function calculate() {
+
+var loan;
+var rate;
+var years;
+var months;
+
+var payment;
+var totalInterest;
+
+var interest;
+var principal;
+var balance;
+
+var report;
+
+loan = parseFloat(document.theform.loanAmountFmInput.value);
+rate = parseFloat(document.theform.rateFmInput.value);
+years = parseInt(document.theform.yearsFmInput.value);
+
+months = parseInt(years * 12);
+
+rate = parseFloat(rate / 1200);
+
+payment = loan * rate * (Math.pow(1 + rate, months)) / (Math.pow(1 + rate, months) - 1);
+
+totalInterest = parseFloat((payment * months) - loan);
+
+report = "<table class='tabledisplay'>"
+
+balance = parseFloat(loan);
+
+report += "<tr class='trdisplay'><th class='tddisplay'>" + " Pmt Num " + "</th><th class='tddisplay'>" + " Interest " + "</th><th class='tddisplay'>" + " Principal " + "</th><th class='tddisplay'>" + " Payment " + "</th><th class='tddisplay'>" + " Balance " + "</th></tr>";
+
+for (i = 1; i < months; i++) {
+interest = parseFloat(balance * rate);
+principal = parseFloat(payment - interest);
+balance = parseFloat(balance - principal);
+report += "<tr class='trdisplay'><td class='tddisplay'>" + "<span class='alignright'>" + i + "</span></td><td class='tddisplay'>" + "<span class='alignright'>" + accounting.formatMoney(interest) + "</span></td><td class='tddisplay'>" + "<span class='alignright'>" + accounting.formatMoney(principal) + "</span></td><td class='tddisplay'>" + "<span class='alignright'>" + accounting.formatMoney(payment) + "</span></td><td class='tddisplay'>" + "<span class='alignright'>" + accounting.formatMoney(balance) + "</span></td></tr>";
+}
+
+interest = parseFloat(balance * rate);
+principal = parseFloat(payment - interest);
+balance = parseFloat(balance - principal);
+report += "<tr class='trdisplay'><td class='tddisplay'>" + "<span class='alignright'>" + i + "</span></td><td class='tddisplay'>" + "<span class='alignright'>" + accounting.formatMoney(interest) + "</span></td><td class='tddisplay'>" + "<span class='alignright'>" + accounting.formatMoney(principal) + "</span></td><td class='tddisplay'>" + "<span class='alignright'>" + accounting.formatMoney(payment) + "</span></td><td class='tddisplay'>" + "<span class='alignright'>" + accounting.formatMoney(0) + "</span></td></tr>";
+
+report += "</table>";
+
+document.getElementById("reportFmOutput").innerHTML = report;
+
+document.getElementById("numOfPaymentsFmOutput").innerHTML = months;
+document.getElementById("paymentFmOutput").innerHTML = accounting.formatMoney(payment);
+document.getElementById("totalInterestFmOutput").innerHTML = accounting.formatMoney(totalInterest);
+
+document.getElementById("loanAmountFmOutput").innerHTML = accounting.formatMoney(loan);
+document.theform.loanAmountFmInput.value = accounting.formatMoney(loan);
+}
+
+function clearinfo() {
+document.theform.loanAmountFmInput.value = " ";
+document.theform.rateFmInput.value = " ";
+document.theform.yearsFmInput.value = " ";
+
+document.getElementById("numOfPaymentsFmOutput").innerHTML = " ";
+document.getElementById("paymentsFmOutput").innerHTML = " ";
+document.getElementById("totalInterestFmOutput").innerHTML = " ";
+
+document.getElementById("loanAmountFmOutput").innerHTML = " ";
+document.getElementById("reportFmOutput").innerHTML = " ";
+
+document.theform.loanAmountFmInput.focus();
+}
+
+</script>
+
+</td>
+</tr>
+</table>
+<p>
+</p>
+
+<a href="http://csnet.southtexascollege.edu/localuser/spruned5/index.html">Go Back to HomePage</a>
+	<p><strong>Salvador Pruneda</strong></p> 
+
+
+</body>
+</html>
+
+
+
+
+
+
+
+
